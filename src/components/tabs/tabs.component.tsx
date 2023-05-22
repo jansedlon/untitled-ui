@@ -1,53 +1,31 @@
 import { tabStyle, tabsStyle } from "./tabs.styles";
 import { PolymorphicComponentProps } from "@/utils";
+import * as RadixTabs from "@radix-ui/react-tabs";
 import { AriaTabListProps, useTab, useTabList } from "@react-aria/tabs";
 import { type Node, Orientation } from "@react-types/shared";
-import React, { ElementType, ReactNode, useRef } from "react";
-import { Link } from "react-router-dom";
-import { Item, TabListState, useTabListState } from "react-stately";
+import React, { ElementType, useRef } from "react";
 
-export type TabsProps = AriaTabListProps<object> & {
-	tabComponent?: ElementType;
-};
+export type TabsProps = RadixTabs.TabsProps;
 
 const tabsClassName = tabsStyle();
 
-export function Tabs(props: TabsProps) {
-	const state = useTabListState(props);
-	const ref = useRef<HTMLDivElement>(null);
-	const { tabListProps } = useTabList(props, state, ref);
-
-	return (
-		<div ref={ref} {...tabListProps} className={tabsClassName}>
-			{[...state.collection].map((tab) => (
-				<VisualTab
-					key={tab.key}
-					item={tab}
-					state={state}
-					orientation={props.orientation}
-				/>
-			))}
-		</div>
-	);
+export function Tabs({ children, ...props }: TabsProps) {
+	return <RadixTabs.Root {...props}>{children}</RadixTabs.Root>;
 }
 
-type VisualTabProps = {
-	key: React.Key;
-	item: Node<object>;
-	state: TabListState<object>;
-	orientation?: Orientation;
+Tabs.List = function TabsList(props: RadixTabs.TabsListProps) {
+	return <RadixTabs.List {...props} className={tabsClassName} />;
 };
 
-function VisualTab({ item, state, ...rest }: VisualTabProps) {
-	const { key, rendered } = item;
-	const ref = useRef(null);
-	const { tabProps, isSelected } = useTab({ key }, state, ref);
-
-	const style = tabStyle({ selected: isSelected });
-
+Tabs.Tab = <TElement extends ElementType>({
+	component,
+	children,
+	...props
+}: PolymorphicComponentProps<TElement, RadixTabs.TabsTriggerProps>) => {
+	const Component = component ?? "button";
 	return (
-		<div {...tabProps} ref={ref} className={style} {...rest}>
-			{rendered}
-		</div>
+		<RadixTabs.Trigger asChild={!!component} {...props} className={tabStyle()}>
+			{component ? <Component>{children}</Component> : children}
+		</RadixTabs.Trigger>
 	);
-}
+};

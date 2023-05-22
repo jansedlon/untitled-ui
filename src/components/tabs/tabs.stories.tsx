@@ -1,7 +1,6 @@
 import { Tabs } from "./tabs.component";
 import { Meta, StoryObj } from "@storybook/react";
 import { Link, MemoryRouter, useParams } from "react-router-dom";
-import { Item } from "react-stately";
 
 export default {
 	title: "Tabs",
@@ -10,7 +9,7 @@ export default {
 		// eslint-disable-next-line @typescript-eslint/naming-convention
 		(Story) => {
 			return (
-				<MemoryRouter initialEntries={["/"]}>
+				<MemoryRouter initialEntries={["/", "/1", "/2", "/3"]}>
 					<Story />
 				</MemoryRouter>
 			);
@@ -25,10 +24,18 @@ function StoryComponent(props: ExtractStoryProps<Story>) {
 	const params = useParams<"id">();
 	return (
 		<div>
-			<Tabs tabComponent={Link} {...props} defaultSelectedKey={`/1`}>
-				<Item key="/1">Tab 1</Item>
-				<Item key="/2">Tab 2</Item>
-				<Item key="/3">Tab 3</Item>
+			<Tabs {...props}>
+				<Tabs.List>
+					<Tabs.Tab component={Link} to="/1" value="/1">
+						Tab 1
+					</Tabs.Tab>
+					<Tabs.Tab value="/2" component={Link} to="/2">
+						Tab 2
+					</Tabs.Tab>
+					<Tabs.Tab value="/3" disabled component={Link} to="/3">
+						Tab 3
+					</Tabs.Tab>
+				</Tabs.List>
 			</Tabs>
 			{params.id}
 		</div>

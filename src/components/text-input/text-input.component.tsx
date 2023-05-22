@@ -1,29 +1,24 @@
 import { Label } from "../label";
 import { textInputStyles } from "./text-input.styles";
-import { useMergedRef } from "@/hooks";
-import { AriaTextFieldProps, useTextField } from "@react-aria/textfield";
+import * as RadixForm from "@radix-ui/react-form";
 import clsx from "clsx";
-import { ForwardedRef, ReactNode, forwardRef, useRef } from "react";
+import { ForwardedRef, ReactNode, forwardRef } from "react";
 
-export type TextInputProps = AriaTextFieldProps & {
+export type TextInputProps = RadixForm.FormFieldProps & {
 	icon?: ReactNode;
 	endAdornment?: ReactNode;
 	rightSection?: ReactNode;
 	className?: string;
+	label?: ReactNode;
+	description?: ReactNode;
+	error?: string;
 };
 
 export const TextInput = forwardRef(
 	(
 		{ className, ...props }: TextInputProps,
-		ref_: ForwardedRef<HTMLInputElement>,
+		ref: ForwardedRef<HTMLInputElement>,
 	) => {
-		const inputRef = useRef<HTMLInputElement>(null);
-		const ref = useMergedRef<HTMLInputElement>(ref_, inputRef);
-
-		const { labelProps, inputProps, descriptionProps, errorMessageProps } =
-			// @ts-ignore
-			useTextField(props, ref);
-
 		const {
 			root,
 			hint,
@@ -33,33 +28,31 @@ export const TextInput = forwardRef(
 			endAdornment,
 			rightSection,
 			error,
-		} = textInputStyles({ withError: !!props.errorMessage });
+		} = textInputStyles({ withError: !!props.error });
 
 		return (
-			<div className={root({ className })}>
+			<RadixForm.Field className={root({ className })}>
 				{props.label && (
-					<Label {...labelProps}>
-						{props.label}
-						{props.isRequired && (
-							<span aria-hidden="true" className="text-red-500">
-								&nbsp;*
-							</span>
-						)}
-					</Label>
+					<RadixForm.Label asChild>
+						<Label>
+							{props.label}
+							{props.required && (
+								<span aria-hidden="true" className="text-red-500">
+									&nbsp;*
+								</span>
+							)}
+						</Label>
+					</RadixForm.Label>
 				)}
 				{props.description && (
-					<div
-						className={clsx(hint(), props.label && "-mt-1.5")}
-						{...descriptionProps}
-					>
+					<RadixForm.Message className={clsx(hint(), props.label && "-mt-1.5")}>
 						{props.description}
-					</div>
+					</RadixForm.Message>
 				)}
 				<div className={inputContainer()}>
 					{props.icon && <div className={icon()}>{props.icon}</div>}
 					<input
 						className={input()}
-						{...inputProps}
 						data-with-end-adornment={!!props.endAdornment}
 						data-with-icon={!!props.icon}
 						ref={ref}
@@ -71,12 +64,12 @@ export const TextInput = forwardRef(
 						<div className={rightSection()}>{props.rightSection}</div>
 					)}
 				</div>
-				{props.errorMessage && (
-					<p className={error()} {...errorMessageProps}>
-						{props.errorMessage}
-					</p>
+				{props.error && (
+					<RadixForm.ValidityState className={error()}>
+						{props.error}
+					</RadixForm.ValidityState>
 				)}
-			</div>
+			</RadixForm.Field>
 		);
 	},
 );
