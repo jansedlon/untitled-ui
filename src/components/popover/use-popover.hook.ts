@@ -1,37 +1,35 @@
 import {
 	Placement,
-	arrow,
 	autoUpdate,
 	flip,
 	offset,
 	shift,
+	useClick,
 	useDismiss,
 	useFloating,
-	useFocus,
-	useHover,
 	useInteractions,
 	useRole,
-	useTransitionStyles,
 } from "@floating-ui/react";
 import { useMemo, useState } from "react";
 
-type TooltipOptions = {
+export type PopoverOptions = {
 	initialOpen?: boolean;
 	placement?: Placement;
+	modal?: boolean;
 	open?: boolean;
 	onOpenChange?: (open: boolean) => void;
 };
 
-const ARROW_HEIGHT = 7;
-const GAP = 10;
-
-export function useTooltip({
+export const usePopover = ({
+	initialOpen = false,
+	placement = "bottom",
+	modal,
 	open: controlledOpen,
 	onOpenChange: setControlledOpen,
-	initialOpen = false,
-	placement = "top",
-}: TooltipOptions) {
+}: PopoverOptions = {}) => {
 	const [uncontrolledOpen, setUncontrolledOpen] = useState(initialOpen);
+	const [labelId, setLabelId] = useState<string | undefined>();
+	const [descriptionId, setDescriptionId] = useState<string | undefined>();
 
 	const open = controlledOpen ?? uncontrolledOpen;
 	const setOpen = setControlledOpen ?? setUncontrolledOpen;
@@ -41,25 +39,25 @@ export function useTooltip({
 		open,
 		onOpenChange: setOpen,
 		whileElementsMounted: autoUpdate,
-		middleware: [offset(GAP + ARROW_HEIGHT), flip(), shift({ padding: 5 })],
-	});
-	const transition = useTransitionStyles(data.context, {
-		duration: 100,
+		middleware: [
+			offset(5),
+			flip({
+				fallbackAxisSideDirection: "end",
+				padding: 5,
+			}),
+			shift({ padding: 5 }),
+		],
 	});
 
 	const context = data.context;
 
-	const hover = useHover(context, {
-		move: false,
-		enabled: controlledOpen == null,
-	});
-	const focus = useFocus(context, {
+	const click = useClick(context, {
 		enabled: controlledOpen == null,
 	});
 	const dismiss = useDismiss(context);
-	const role = useRole(context, { role: "tooltip" });
+	const role = useRole(context);
 
-	const interactions = useInteractions([hover, focus, dismiss, role]);
+	const interactions = useInteractions([click, dismiss, role]);
 
 	return useMemo(
 		() => ({
@@ -67,8 +65,12 @@ export function useTooltip({
 			setOpen,
 			...interactions,
 			...data,
-			...transition,
+			modal,
+			labelId,
+			descriptionId,
+			setLabelId,
+			setDescriptionId,
 		}),
-		[open, setOpen, interactions, data, transition],
+		[open, setOpen, interactions, data, modal, labelId, descriptionId],
 	);
-}
+};

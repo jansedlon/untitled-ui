@@ -1,75 +1,89 @@
 import { Label } from "../label";
 import { textInputStyles } from "./text-input.styles";
-import * as RadixForm from "@radix-ui/react-form";
+import { useMergedRef } from "@/hooks";
 import clsx from "clsx";
-import { ForwardedRef, ReactNode, forwardRef } from "react";
+import {
+	ForwardedRef,
+	HTMLProps,
+	ReactNode,
+	forwardRef,
+	useId,
+	useRef,
+} from "react";
 
-export type TextInputProps = RadixForm.FormFieldProps & {
+export type TextInputProps = {
 	icon?: ReactNode;
 	endAdornment?: ReactNode;
 	rightSection?: ReactNode;
 	className?: string;
-	label?: ReactNode;
-	description?: ReactNode;
+	description?: string;
 	error?: string;
 };
 
 export const TextInput = forwardRef(
 	(
-		{ className, ...props }: TextInputProps,
-		ref: ForwardedRef<HTMLInputElement>,
+		{
+			className,
+			required,
+			error,
+			endAdornment,
+			icon,
+			description,
+			label,
+			// If used within Popover, it passes down children and throwing error
+			children: _children,
+			...props
+		}: TextInputProps & HTMLProps<HTMLInputElement>,
+		ref_: ForwardedRef<HTMLInputElement>,
 	) => {
+		const id = useId();
+		const inputRef = useRef<HTMLInputElement>(null);
+		const ref = useMergedRef<HTMLInputElement>(ref_, inputRef);
+
 		const {
 			root,
 			hint,
 			inputContainer,
-			icon,
+			icon: iconStyles,
 			input,
-			endAdornment,
+			endAdornment: endAdornmentStyles,
 			rightSection,
-			error,
-		} = textInputStyles({ withError: !!props.error });
+			error: errorStyle,
+		} = textInputStyles({ withError: !!error });
 
 		return (
-			<RadixForm.Field className={root({ className })}>
-				{props.label && (
-					<RadixForm.Label asChild>
-						<Label>
-							{props.label}
-							{props.required && (
-								<span aria-hidden="true" className="text-red-500">
-									&nbsp;*
-								</span>
-							)}
-						</Label>
-					</RadixForm.Label>
+			<div className={root({ className })}>
+				{label && (
+					<Label htmlFor={id}>
+						{label}
+						{required && (
+							<span aria-hidden="true" className="text-red-500">
+								&nbsp;*
+							</span>
+						)}
+					</Label>
 				)}
-				{props.description && (
-					<RadixForm.Message className={clsx(hint(), props.label && "-mt-1.5")}>
-						{props.description}
-					</RadixForm.Message>
+				{description && (
+					<div className={clsx(hint(), label && "-mt-1.5")}>{description}</div>
 				)}
 				<div className={inputContainer()}>
-					{props.icon && <div className={icon()}>{props.icon}</div>}
+					{icon && <div className={iconStyles()}>{icon}</div>}
 					<input
 						className={input()}
-						data-with-end-adornment={!!props.endAdornment}
-						data-with-icon={!!props.icon}
+						{...props}
+						data-with-end-adornment={!!endAdornment}
+						data-with-icon={!!icon}
 						ref={ref}
 					/>
-					{props.endAdornment && (
-						<div className={endAdornment()}>{props.endAdornment}</div>
+					{endAdornment && (
+						<div className={endAdornmentStyles()}>{endAdornment}</div>
 					)}
 					{props.rightSection && (
 						<div className={rightSection()}>{props.rightSection}</div>
 					)}
 				</div>
-				{props.error && (
-					<RadixForm.ValidityState className={error()}>
-						{props.error}
-					</RadixForm.ValidityState>
-				)}
-			</RadixForm.Field>
+				{error && <p className={errorStyle()}>{error}</p>}
+			</div>
 		);
 	},
 );

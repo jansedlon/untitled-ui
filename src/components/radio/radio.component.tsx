@@ -34,6 +34,7 @@ export const Radio = forwardRef(
 			);
 		}
 
+		// @ts-ignore
 		const { inputProps } = useRadio(props, state, ref);
 
 		return (

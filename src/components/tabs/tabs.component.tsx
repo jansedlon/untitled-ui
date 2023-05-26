@@ -1,9 +1,7 @@
 import { tabStyle, tabsStyle } from "./tabs.styles";
 import { PolymorphicComponentProps } from "@/utils";
 import * as RadixTabs from "@radix-ui/react-tabs";
-import { AriaTabListProps, useTab, useTabList } from "@react-aria/tabs";
-import { type Node, Orientation } from "@react-types/shared";
-import React, { ElementType, useRef } from "react";
+import { ElementType } from "react";
 
 export type TabsProps = RadixTabs.TabsProps;
 

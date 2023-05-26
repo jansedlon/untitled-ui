@@ -5,7 +5,7 @@ import {
 	useMergeRefs,
 } from "@floating-ui/react";
 import clsx from "clsx";
-import { ReactNode, cloneElement, forwardRef, useRef } from "react";
+import { ReactNode, cloneElement, forwardRef } from "react";
 
 import { useTooltip } from "./use-tooltip";
 import { isElement } from "@/utils";
@@ -36,11 +36,10 @@ export const Tooltip = forwardRef<HTMLElement, TooltipProps>(
 		},
 		propRef,
 	) => {
+		// rome-ignore lint/suspicious/noExplicitAny: <explanation>
 		const childrenRef = (children as any).ref;
-		const arrowRef = useRef<HTMLElement>(null);
 		const tooltip = useTooltip({
 			...props,
-			arrowRef,
 			initialOpen,
 			onOpenChange,
 		});
@@ -84,7 +83,6 @@ export const Tooltip = forwardRef<HTMLElement, TooltipProps>(
 									"border-slate-900 bg-slate-900 text-white",
 							)}
 						>
-							<FloatingArrow context={context} fill="none" ref={arrowRef} />
 							<div className="flex flex-col space-y-1">
 								{title && <span>{title}</span>}
 								{description && (

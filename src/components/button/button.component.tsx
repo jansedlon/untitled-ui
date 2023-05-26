@@ -1,8 +1,8 @@
-import { useMergedRef } from "../../hooks";
-import { UILiteralSize } from "../../types";
-import { PolymorphicComponentProps, PolymorphicRef } from "../../utils";
 import { Loader } from "../loader";
 import { buttonStyles } from "./button.styles";
+import { useMergedRef } from "@/hooks";
+import { UILiteralSize } from "@/types";
+import { PolymorphicComponentProps, PolymorphicRef } from "@/utils";
 import { useButton } from "@react-aria/button";
 import {
 	ComponentPropsWithoutRef,
@@ -41,14 +41,15 @@ export const Button = forwardRef(
 			variant = "primary",
 			...props
 		}: PolymorphicComponentProps<TElement, ButtonProps>,
-		ref_: PolymorphicRef<TElement>,
+		ref: PolymorphicRef<TElement>,
 	) => {
 		const Component: ElementType = component || "button";
-		const buttonRef = useRef<HTMLElement>(null);
-		const ref = useMergedRef(ref_, buttonRef);
+		// const buttonRef = useRef<HTMLElement>(null);
+		// const ref = useMergedRef(ref_, buttonRef);
 
 		const { buttonProps } = useButton(
 			{ ...props, elementType: component || "button" },
+			// @ts-ignore
 			ref,
 		);
 

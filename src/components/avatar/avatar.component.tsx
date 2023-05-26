@@ -1,5 +1,5 @@
 import * as RadixAvatar from "@radix-ui/react-avatar";
-import React, {
+import {
 	ComponentPropsWithoutRef,
 	ReactNode,
 	forwardRef,
@@ -20,6 +20,7 @@ export const Avatar = forwardRef<HTMLImageElement, AvatarProps>(
 	({ size = "sm", className, style, src, children, ...rest }, ref) => {
 		const [_error, setError] = useState(!src);
 
+		// @ts-ignore
 		const styles = avatarStyles({ size });
 
 		useEffect(() => {

@@ -13,21 +13,21 @@ export const Default: Story = {
 	render: () => (
 		<div className="flex flex-col space-y-4">
 			<Toggle label="Label" />
-			<Toggle isDisabled label="Label" />
+			<Toggle disabled label="Label" />
 			<Toggle
 				description="Save my login details for next time."
 				label="Remember me"
 			/>
 			<Toggle
 				description="Save my login details for next time."
-				errorMessage="This field is required"
+				error="This field is required"
 				label="Remember me"
 			/>
 			<Toggle
-				defaultSelected
-				isDisabled
+				defaultChecked
+				disabled
 				description="Save my login details for next time."
-				errorMessage="This field is required"
+				error="This field is required"
 				label="Remember me"
 			/>
 		</div>

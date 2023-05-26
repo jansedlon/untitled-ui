@@ -4,18 +4,37 @@ import { AriaRadioGroupProps, useRadioGroup } from "@react-aria/radio";
 import { ReactNode, createContext } from "react";
 import { RadioGroupState, useRadioGroupState } from "react-stately";
 
-type RadioGroupProps = AriaRadioGroupProps & {
+type RadioGroupProps = Omit<
+	AriaRadioGroupProps,
+	"isRequired" | "isDisabled" | "errorMessage"
+> & {
 	children: ReactNode;
+	error?: string;
+	required?: boolean;
+	disabled?: boolean;
 };
 
 export const RadioContext = createContext<RadioGroupState | null>(null);
 
 const styles = radioGroupStyles();
 
-export const RadioGroup = (props: RadioGroupProps) => {
+export const RadioGroup = ({
+	error,
+	required,
+	disabled,
+	...props
+}: RadioGroupProps) => {
 	const state = useRadioGroupState(props);
 	const { radioGroupProps, labelProps, descriptionProps, errorMessageProps } =
-		useRadioGroup(props, state);
+		useRadioGroup(
+			{
+				errorMessage: error,
+				isRequired: required,
+				isDisabled: disabled,
+				...props,
+			},
+			state,
+		);
 
 	return (
 		<div {...radioGroupProps}>
@@ -30,9 +49,9 @@ export const RadioGroup = (props: RadioGroupProps) => {
 					{props.description}
 				</div>
 			)}
-			{props.errorMessage && state.validationState === "invalid" && (
+			{error && state.validationState === "invalid" && (
 				<div {...errorMessageProps} className={styles.errorMessage()}>
-					{props.errorMessage}
+					{error}
 				</div>
 			)}
 		</div>
