@@ -245,7 +245,7 @@ const Item = forwardRef<HTMLDivElement, ItemProps & HTMLProps<HTMLDivElement>>(
 			>
 				<div
 					className={clsx(
-						"py-2 pr-2.5 pl-2 rounded-md flex text-sm md:text-base gap-2 font-medium text-slate-900",
+						"py-2 pr-2.5 pl-2 rounded-md flex sm:text-sm gap-2 font-medium text-slate-800",
 						active && "bg-slate-50",
 					)}
 				>

@@ -1,15 +1,12 @@
 import { Loader } from "../loader";
 import { buttonStyles } from "./button.styles";
-import { useMergedRef } from "@/hooks";
 import { UILiteralSize } from "@/types";
 import { PolymorphicComponentProps, PolymorphicRef } from "@/utils";
-import { useButton } from "@react-aria/button";
 import {
 	ComponentPropsWithoutRef,
 	ElementType,
 	ReactNode,
 	forwardRef,
-	useRef,
 } from "react";
 
 type ButtonVariant = "primary" | "secondary" | "tertiary" | "text";
@@ -44,14 +41,6 @@ export const Button = forwardRef(
 		ref: PolymorphicRef<TElement>,
 	) => {
 		const Component: ElementType = component || "button";
-		// const buttonRef = useRef<HTMLElement>(null);
-		// const ref = useMergedRef(ref_, buttonRef);
-
-		const { buttonProps } = useButton(
-			{ ...props, elementType: component || "button" },
-			// @ts-ignore
-			ref,
-		);
 
 		const {
 			root,
@@ -69,7 +58,7 @@ export const Button = forwardRef(
 
 		return (
 			<Component
-				{...buttonProps}
+				{...props}
 				ref={ref}
 				className={root({ className })}
 				disabled={loading || ("disabled" in props && props.disabled)}

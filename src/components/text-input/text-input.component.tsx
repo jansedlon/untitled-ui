@@ -30,6 +30,7 @@ export const TextInput = forwardRef(
 			icon,
 			description,
 			label,
+			rightSection,
 			// If used within Popover, it passes down children and throwing error
 			children: _children,
 			...props
@@ -37,6 +38,8 @@ export const TextInput = forwardRef(
 		ref_: ForwardedRef<HTMLInputElement>,
 	) => {
 		const id = useId();
+		const labelId = useId();
+		const descriptionId = useId();
 		const inputRef = useRef<HTMLInputElement>(null);
 		const ref = useMergedRef<HTMLInputElement>(ref_, inputRef);
 
@@ -47,14 +50,14 @@ export const TextInput = forwardRef(
 			icon: iconStyles,
 			input,
 			endAdornment: endAdornmentStyles,
-			rightSection,
+			rightSection: rightSectionStyles,
 			error: errorStyle,
 		} = textInputStyles({ withError: !!error });
 
 		return (
 			<div className={root({ className })}>
 				{label && (
-					<Label htmlFor={id}>
+					<Label htmlFor={id} id={labelId}>
 						{label}
 						{required && (
 							<span aria-hidden="true" className="text-red-500">
@@ -64,7 +67,9 @@ export const TextInput = forwardRef(
 					</Label>
 				)}
 				{description && (
-					<div className={clsx(hint(), label && "-mt-1.5")}>{description}</div>
+					<div id={descriptionId} className={clsx(hint(), label && "-mt-1.5")}>
+						{description}
+					</div>
 				)}
 				<div className={inputContainer()}>
 					{icon && <div className={iconStyles()}>{icon}</div>}
@@ -73,13 +78,17 @@ export const TextInput = forwardRef(
 						{...props}
 						data-with-end-adornment={!!endAdornment}
 						data-with-icon={!!icon}
+						id={id}
 						ref={ref}
+						aria-labelledby={label ? labelId : undefined}
+						aria-describedby={description ? descriptionId : undefined}
+						aria-invalid={!!error}
 					/>
 					{endAdornment && (
 						<div className={endAdornmentStyles()}>{endAdornment}</div>
 					)}
-					{props.rightSection && (
-						<div className={rightSection()}>{props.rightSection}</div>
+					{rightSection && (
+						<div className={rightSectionStyles()}>{rightSection}</div>
 					)}
 				</div>
 				{error && <p className={errorStyle()}>{error}</p>}

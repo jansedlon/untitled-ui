@@ -1,59 +1,36 @@
 import { Label } from "../label";
 import { radioGroupStyles } from "./radio-group.styles";
-import { AriaRadioGroupProps, useRadioGroup } from "@react-aria/radio";
-import { ReactNode, createContext } from "react";
-import { RadioGroupState, useRadioGroupState } from "react-stately";
+import * as RadixRadioGroup from "@radix-ui/react-radio-group";
+import { ReactNode, createContext, useId } from "react";
 
-type RadioGroupProps = Omit<
-	AriaRadioGroupProps,
-	"isRequired" | "isDisabled" | "errorMessage"
-> & {
-	children: ReactNode;
+type RadioGroupProps = RadixRadioGroup.RadioGroupProps & {
+	label?: string;
 	error?: string;
-	required?: boolean;
-	disabled?: boolean;
+	description?: ReactNode;
 };
-
-export const RadioContext = createContext<RadioGroupState | null>(null);
 
 const styles = radioGroupStyles();
 
 export const RadioGroup = ({
+	children,
+	label,
 	error,
-	required,
-	disabled,
+	description,
 	...props
 }: RadioGroupProps) => {
-	const state = useRadioGroupState(props);
-	const { radioGroupProps, labelProps, descriptionProps, errorMessageProps } =
-		useRadioGroup(
-			{
-				errorMessage: error,
-				isRequired: required,
-				isDisabled: disabled,
-				...props,
-			},
-			state,
-		);
-
+	const labelId = useId();
 	return (
-		<div {...radioGroupProps}>
-			<Label component="span" {...labelProps}>
-				{props.label}
-			</Label>
-			<RadioContext.Provider value={state}>
-				{props.children}
-			</RadioContext.Provider>
-			{props.description && (
-				<div {...descriptionProps} className={styles.description()}>
-					{props.description}
-				</div>
+		<RadixRadioGroup.Root {...props} aria-describedby={labelId}>
+			{label && (
+				<Label component="div" id={labelId}>
+					{label}
+				</Label>
 			)}
-			{error && state.validationState === "invalid" && (
-				<div {...errorMessageProps} className={styles.errorMessage()}>
-					{error}
-				</div>
+			{description && (
+				<span className={styles.description()}>{description}</span>
 			)}
-		</div>
+			{children}
+			{error && <span className={styles.error()}>{error}</span>}
+		</RadixRadioGroup.Root>
 	);
 };

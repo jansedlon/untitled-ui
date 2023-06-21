@@ -12,12 +12,14 @@ type Story = StoryObj<typeof RadioGroup>;
 
 export const Default: Story = {
 	render: () => (
-		<RadioGroup label="Label">
-			<Stack spacing="xs">
-				<Radio value="1" label="Item 1" />
-				<Radio value="2" label="Item 2" />
-				<Radio value="3" label="Item 3" />
-			</Stack>
-		</RadioGroup>
+		<>
+			<RadioGroup label="Label">
+				<Stack spacing="xs">
+					<Radio value="1" label="Item 1" />
+					<Radio value="2" label="Item 2" />
+					<Radio value="3" disabled label="Item 3" />
+				</Stack>
+			</RadioGroup>
+		</>
 	),
 };

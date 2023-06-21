@@ -1,7 +1,7 @@
 import { ModalContext, useModalContext } from "./modal.context";
 import { modalSizes, modalStyles } from "./modal.styles";
 import { DialogOptions, useDialog } from "./use-dialog.hook";
-import { ClassNames, UINumberSize, UISize } from "@/types";
+import { ClassNames, UINumberSize } from "@/types";
 import {
 	FloatingFocusManager,
 	FloatingOverlay,

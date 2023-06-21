@@ -1,9 +1,4 @@
-import {
-	FloatingArrow,
-	FloatingPortal,
-	Placement,
-	useMergeRefs,
-} from "@floating-ui/react";
+import { FloatingPortal, Placement, useMergeRefs } from "@floating-ui/react";
 import clsx from "clsx";
 import { ReactNode, cloneElement, forwardRef } from "react";
 

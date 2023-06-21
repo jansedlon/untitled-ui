@@ -1,51 +1,48 @@
-import { RadioContext } from "./radio-group.component";
-import { useMergedRef } from "@/hooks";
-import { AriaRadioProps, useRadio } from "@react-aria/radio";
-import { ForwardedRef, ReactNode, forwardRef, useContext, useRef } from "react";
+import * as RadixRadioGroup from "@radix-ui/react-radio-group";
+import { ForwardedRef, ReactNode, forwardRef, useId } from "react";
 import { tv } from "tailwind-variants";
 
-type RadioProps = AriaRadioProps & {
-	className?: string;
-	label: ReactNode;
+type RadioProps = RadixRadioGroup.RadioGroupItemProps & {
+	label?: ReactNode;
 };
 
-const radioStyles = tv({
-	slots: {
-		root: "flex",
-		container: "flex h-5 items-center",
-		label: "ml-2 text-sm select-none font-medium text-slate-700",
-		input:
-			"peer m-0 block h-4 w-4 appearance-none rounded-full border border-slate-300 bg-white transition-colors checked:border-slate-700 checked:text-slate-700 focus:outline-none focus-visible:shadow-[0px_0px_0px_4px_theme(colors.slate.100)]  disabled:border-slate-300 disabled:bg-slate-100",
-		icon: "pointer-events-none absolute inset-0 m-auto translate-y-0 scale-100 opacity-0 transition-opacity peer-checked:opacity-100 peer-disabled:text-slate-300",
+const radioStyles = tv(
+	{
+		slots: {
+			root: "flex group outline-none",
+			container: "flex h-5 items-center",
+			label: "ml-2 text-sm select-none font-medium text-slate-700",
+			radioGroupIndicator:
+				"m-0 flex items-center justify-center h-4 w-4 appearance-none rounded-full border border-slate-300 bg-white transition-colors group-data-[state~=checked]:border-slate-700 group-data-[state=checked]:bg-slate-50 group-data-[state=checked]:text-slate-700 group-focus-visible:shadow-[0px_0px_0px_4px_theme(colors.slate.100)] group-disabled:border-slate-300 group-disabled:bg-slate-100",
+			icon: "pointer-events-none scale-100 opacity-0 transition-opacity group-data-[state=checked]:opacity-100 group-disabled:text-slate-300",
+		},
 	},
-});
+	{
+		twMerge: false,
+	},
+);
 
 const styles = radioStyles();
 
 export const Radio = forwardRef(
-	(props: RadioProps, ref_: ForwardedRef<HTMLInputElement>) => {
-		const state = useContext(RadioContext);
-		const inputRef = useRef<HTMLInputElement>(null);
-		const ref = useMergedRef(inputRef, ref_);
-
-		if (!state) {
-			throw new Error(
-				"Radio components must be rendered within a RadioGroup component.",
-			);
-		}
-
-		// @ts-ignore
-		const { inputProps } = useRadio(props, state, ref);
+	(
+		{ className, label, ...props }: RadioProps,
+		ref: ForwardedRef<HTMLButtonElement>,
+	) => {
+		const id = useId();
 
 		return (
-			<label className={styles.root({ className: props.className })}>
-				<div className={styles.container()}>
-					<div className="relative h-4">
-						<input
-							className="peer m-0 block h-4 w-4 appearance-none rounded-full border border-slate-300 bg-white transition-colors checked:border-slate-700 checked:text-slate-700 focus:outline-none focus-visible:shadow-[0px_0px_0px_4px_theme(colors.slate.100)]  disabled:border-slate-300 disabled:bg-slate-100"
-							ref={ref}
-							{...inputProps}
-						/>
+			<div className="flex items-center">
+				<RadixRadioGroup.RadioGroupItem
+					ref={ref}
+					className={styles.root({ className })}
+					id={id}
+					{...props}
+				>
+					<RadixRadioGroup.RadioGroupIndicator
+						forceMount
+						className={styles.radioGroupIndicator()}
+					>
 						{/* rome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
 						<svg
 							className={styles.icon()}
@@ -57,10 +54,12 @@ export const Radio = forwardRef(
 						>
 							<circle cx="3" cy="3" fill="currentColor" r="3" />
 						</svg>
-					</div>
-				</div>
-				<span className={styles.label()}>{props.label}</span>
-			</label>
+					</RadixRadioGroup.RadioGroupIndicator>
+				</RadixRadioGroup.RadioGroupItem>
+				<label htmlFor={id} className={styles.label()}>
+					{label}
+				</label>
+			</div>
 		);
 	},
 );
